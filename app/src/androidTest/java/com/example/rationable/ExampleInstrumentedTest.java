@@ -1,4 +1,4 @@
-package com.example.barcodescanner;
+package com.example.rationable;
 
 import android.content.Context;
 

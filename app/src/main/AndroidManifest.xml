@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+
 
 
     <application
@@ -22,15 +25,38 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Barcodescanner"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        tools:ignore="WrongManifestParent">
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name="com.example.rationable.StartActivity"
+            android:exported="true"
+            tools:ignore="MissingClass,WrongManifestParent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.rationable.BarcodeScannerActivity"
+            android:exported="true"
+            tools:ignore="MissingClass,WrongManifestParent">
+        </activity>
+        <activity
+            android:name="com.example.rationable.ManualActivity"
+            android:exported="true"
+            tools:ignore="MissingClass,WrongManifestParent">
+        </activity>
+
+        <activity
+            android:name="com.example.rationable.ScheduleActivity"
+            android:exported="true"
+            tools:ignore="MissingClass,WrongManifestParent">
+        </activity>
+        <activity
+            android:name="com.example.rationable.CurrentRationsActivity"
+            android:exported="true"
+            tools:ignore="MissingClass,WrongManifestParent">
         </activity>
     </application>
 

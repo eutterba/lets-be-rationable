@@ -1,4 +1,4 @@
-package com.example.barcodescanner;
+package com.example.rationable;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.barcodescanner.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -36,7 +37,11 @@ import com.google.mlkit.vision.common.InputImage;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class BarcodeScannerActivity extends AppCompatActivity {
+
+
+    // i used this tutorial to help me a lot with the barcode scanner
+    //https://youtu.be/jngzWPWWiKE?si=2oZkfmtsJ-2Y5P-u
 
     //UI Views
     private MaterialButton cameraBtn;
@@ -69,12 +74,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_barcode);
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
 //            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
 //            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
 //            return insets;
 //        });
+
+        //back button just so i can find it easy
+        MaterialButton homeBarBtn =  findViewById(R.id.homeBarBtn);
+        homeBarBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(BarcodeScannerActivity.this, StartActivity.class);
+            startActivity(intent);
+        });
+
+
 
         //init UI Views
 
@@ -142,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if(imageUri == null){
 
-                    Toast.makeText(MainActivity.this, "Pick image first...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BarcodeScannerActivity.this, "Pick image first...", Toast.LENGTH_SHORT).show();
 
                 }else{
 
@@ -245,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     //here we will recive the image, if picked from gallery
-                    if(result.getResultCode()== MainActivity.RESULT_OK){
+                    if(result.getResultCode()== BarcodeScannerActivity.RESULT_OK){
                         //image picked, get the uri of the image picked
                         Intent data= result.getData();
                         imageUri=data.getData();
@@ -255,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }else{
                         //cancelled
-                        Toast.makeText(MainActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BarcodeScannerActivity.this, "Cancelled", Toast.LENGTH_SHORT).show();
 
                     }
 
@@ -283,7 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     //here we will receive the image, if taken from camera
-                    if(result.getResultCode() == MainActivity.RESULT_OK){
+                    if(result.getResultCode() == BarcodeScannerActivity.RESULT_OK){
                         //image is taken from camera
                         Intent data = result.getData();
                         //we already have the image in the imageUri using function pickImageCamera()
@@ -293,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }else{
                         //cancelled
-                        Toast.makeText(MainActivity.this, "Cancelled...", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BarcodeScannerActivity.this, "Cancelled...", Toast.LENGTH_SHORT).show();
 
                     }
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".MainActivity">
+    tools:context=".BarcodeScannerActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -83,6 +83,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/homeBarBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Back"/>
 
     </LinearLayout>
 
