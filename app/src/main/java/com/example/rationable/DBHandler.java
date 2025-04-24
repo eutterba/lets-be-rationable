@@ -207,6 +207,8 @@ public class DBHandler extends SQLiteOpenHelper {
     public ArrayList<String[]> getSchedule(int calories_eaten, int CALORIE_REQUiREMENTS) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor openRations = getOpenRations();
+        Cursor allRations = getRations();
+        allRations.moveToFirst();
         float calories_needed = CALORIE_REQUiREMENTS - calories_eaten;
         Log.d("DBHandler", "Calories needed: " + calories_needed);
         boolean has_open_ration = true;
@@ -217,7 +219,7 @@ public class DBHandler extends SQLiteOpenHelper {
         //check for open rations
         has_open_ration = openRations.moveToFirst();
         //loops through the database, starting with the open rations till it meets requirements
-        while(calories_needed>=0){
+        while(calories_needed>0){
             //if there are open rations
             if(has_open_ration){
 //                openRations.moveToNext();
@@ -229,7 +231,7 @@ public class DBHandler extends SQLiteOpenHelper {
                 //if the open ration has enough calories to eat
                 if(curr_ration_calories > calories_needed) {
                     float eaten_amount = calories_needed / curr_ration_calories;
-                    schedule.add(new String[]{curr_ration_name, String.valueOf(eaten_amount), String.valueOf(curr_ration_calories)});
+                    schedule.add(new String[]{curr_ration_name, String.valueOf(eaten_amount*curr_ration_amount), String.valueOf(eaten_amount*curr_ration_calories)});
                     calories_needed -= eaten_amount;
                     Log.d("DBHandler", "Calories needed: " + calories_needed);
 
@@ -243,41 +245,52 @@ public class DBHandler extends SQLiteOpenHelper {
                 has_open_ration = openRations.moveToNext();
             }else {
                 //there are no open rations
-                Cursor allRations = getRations();
-                if (allRations.moveToFirst()) {
-                    curr_ration_id = allRations.getInt(0);
-                    String curr_ration_name = allRations.getString(1);
-                    curr_ration_calories = getRationCalories(curr_ration_id);
-                    curr_ration_amount = getRationAmount(curr_ration_id);
-                    int count = 0;
-                    boolean food_found = false;
-                    //checks if the food is in the schedule already
-                    while (count < schedule.size()) {
-                        if (schedule.get(count)[0].equals(curr_ration_name)) {
-                            food_found = true;
-                            break;
-                        }
-                        count++;
+                curr_ration_id = allRations.getInt(0);
+                String curr_ration_name = allRations.getString(1);
+                curr_ration_calories = getRationCalories(curr_ration_id);
+                curr_ration_amount = getRationAmount(curr_ration_id);
+                int count = 0;
+                boolean food_found = false;
+                //checks if the food is in the schedule already
+                while (count < schedule.size()) {
+                    if (schedule.get(count)[0].equals(curr_ration_name)) {
+                        food_found = true;
+                        break;
                     }
-                    //if food is in the schedule already
-                    if (food_found) {
+                    count++;
+                }
+                //if food is in the schedule already
+                if (food_found) {
+                    float open_calories = Float.parseFloat(schedule.get(count)[2]);
+                    if((curr_ration_calories - open_calories) > calories_needed) {
+
                         float open_amount = Float.parseFloat(schedule.get(count)[1]);
                         float eaten_amount = calories_needed / curr_ration_calories;
-                        float new_amount = open_amount + eaten_amount;
-                        String new_amount_string = String.valueOf(new_amount);
-                        String curr_ration_calories_string = String.valueOf(curr_ration_calories);
+                        float new_amount = open_amount + (eaten_amount*curr_ration_amount);
+                        String new_amount_string = String.valueOf(new_amount*curr_ration_amount);
+                        String curr_ration_calories_string = String.valueOf(new_amount*curr_ration_calories);
                         schedule.set(count, new String[]{curr_ration_name, new_amount_string, curr_ration_calories_string});
-                        calories_needed -= eaten_amount;
+                        calories_needed -= eaten_amount*curr_ration_calories;
                         Log.d("DBHandler", "Calories needed: " + calories_needed);
                         break;
                     }
-                    float eaten_amount = calories_needed / curr_ration_calories;
-                    float eaten_calories = eaten_amount * curr_ration_calories;
-                    calories_needed -= eaten_calories;
-                    Log.d("DBHandler", "Calories needed: " + calories_needed);
-                    schedule.add(new String[]{curr_ration_name, String.valueOf(eaten_amount), String.valueOf(curr_ration_calories)});
+                    schedule.set(count, new String[]{curr_ration_name, String.valueOf(curr_ration_amount), String.valueOf(curr_ration_calories)});
+                    calories_needed -= curr_ration_calories;
+
+                }else {
+                    if(curr_ration_calories>calories_needed){
+                        float eaten_amount = calories_needed/ curr_ration_calories;
+                        schedule.add(new String[] {curr_ration_name, String.valueOf(eaten_amount*curr_ration_amount), String.valueOf(eaten_amount*curr_ration_calories)});
+                        calories_needed -= eaten_amount*curr_ration_calories;
+                        break;
+                    }
+                    //if the ration does not have enough calories
+                    schedule.add(new String[] {curr_ration_name, String.valueOf(curr_ration_amount), String.valueOf(curr_ration_calories)});
+                    calories_needed -= curr_ration_calories;
                     allRations.moveToNext();
+
                 }
+
             }
 
         }
